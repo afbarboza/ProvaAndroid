@@ -14,7 +14,7 @@ public class Palavra {
     public Palavra(String palavraFinal) {
         this.palavraFinal = palavraFinal;
         this.palavraCriptograda = "";
-        this.erros = 6;
+        this.erros = 7;
         for (int i = 0; i < palavraFinal.length(); i++) {
             this.palavraCriptograda += "-";
         }
@@ -88,6 +88,13 @@ public class Palavra {
      *          false, caso contrario.
      */
     public boolean checarFimJogo() {
-        return (this.palavraFinal.equals(this.palavraCriptograda) || this.erros == 0);
+        return (this.palavraFinal.equals(this.palavraCriptograda) || this.erros <= 0);
+    }
+
+    public boolean ganhouJogada() {
+        if (this.palavraFinal.equals(this.palavraCriptograda) && this.erros > 0)
+            return true;
+        else
+            return false;
     }
 }
