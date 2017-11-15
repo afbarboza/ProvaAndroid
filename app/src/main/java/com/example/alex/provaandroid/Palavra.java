@@ -6,12 +6,13 @@ package com.example.alex.provaandroid;
  * @author Giovanni Di Lucca
  */
 public class Palavra {
-
+    int id;
     private String palavraFinal;
     private String palavraCriptograda;
     private int erros;
 
-    public Palavra(String palavraFinal) {
+    public Palavra(int id, String palavraFinal) {
+        this.id = id;
         this.palavraFinal = palavraFinal;
         this.palavraCriptograda = "";
         this.erros = 7;
@@ -88,7 +89,7 @@ public class Palavra {
      *          false, caso contrario.
      */
     public boolean checarFimJogo() {
-        return (this.palavraFinal.equals(this.palavraCriptograda) || this.erros <= 0);
+        return (this.palavraFinal.equals(this.palavraCriptograda) || this.erros <= 0 );
     }
 
     public boolean ganhouJogada() {

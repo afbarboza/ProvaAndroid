@@ -1,14 +1,19 @@
 package com.example.alex.provaandroid;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GameForca extends AppCompatActivity {
     /* objeto representando a palavra corrente sendo jogada */
@@ -29,6 +34,26 @@ public class GameForca extends AppCompatActivity {
     /* armazena um array de palavras ja jogadas pelo usuario */
     ArrayList<Palavra> palavrasJogadas;
 
+    public void newWord() {
+        WebService webService = WebService.retrofit.create(WebService.class);
+        Call<PalavraRecebida> wordCall = webService.getWordsWebService();
+        wordCall.enqueue(new Callback<PalavraRecebida>() {
+            @Override
+            public void onResponse(Call<PalavraRecebida> call, Response<PalavraRecebida> response) {
+                if (response.isSuccessful()) {
+                    p = new Palavra(response.body().id, response.body().getWord());
+                } else {
+                    Toast.makeText(getApplicationContext(), "Não foi possível se conectar ao servidor", Toast.LENGTH_SHORT);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PalavraRecebida> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Não foi possível se conectar ao servidor", Toast.LENGTH_SHORT);
+
+            }
+        });
+    }
 
     public void toastMessage(String message) {
         Context context = getApplicationContext();
@@ -37,6 +62,7 @@ public class GameForca extends AppCompatActivity {
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
+
 
     public void atualizaLayout() {
         String palavraCifrada = p.getPalavraCriptograda();
@@ -57,31 +83,28 @@ public class GameForca extends AppCompatActivity {
                 /* todo: redirecionar para a tela de ganhou */
 
             } else {
-                toastMessage("Voce perdeu essa rodada! :-( ");
+                toastMessage("Voce perdeu essa rodada! A palavra era " + p.getPalavraFinal() + " :-( ");
                 /* todo: redirecionar para a tela de perdeu */
             }
-            reinicializaJogo("ALEXBARBOZA");
+            newWord();
         }
 
         /* atualiza o status do jogo para o usuario na tela */
         atualizaLayout();
     }
 
-    public void reinicializaJogo(String novaPalavra) {
-        p = new Palavra(novaPalavra);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_forca);
-        p = new Palavra("OLAMUNDO");
+
+        newWord();
 
         /* inicializa componentes graficos */
         btnSubmit = (Button) findViewById(R.id.btn_submit);
         lblErros = (TextView) findViewById(R.id.tv_errors);
         lblPalavraCifrada = (TextView) findViewById(R.id.tv_palavra);
-        txtLetraDigitada =  (EditText) findViewById(R.id.et_digitada);
+        txtLetraDigitada = (EditText) findViewById(R.id.et_digitada);
 
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
