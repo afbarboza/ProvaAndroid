@@ -2,6 +2,8 @@ package com.example.alex.provaandroid;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +32,35 @@ public class GameForca extends AppCompatActivity {
     ArrayList<Palavra> palavrasJogadas;
 
 
+    /**
+     * vibrar - faz o celular vibrar por 400 ms
+     */
+    public void vibrar() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(400);
+
+    }
+
+    /**
+     * playAudioGanhou - reproduz audio de vitoria
+     */
+    public void playAudioGanhou() {
+        MediaPlayer mp = MediaPlayer.create(this, R.raw.ganhou1);
+        mp.start();
+    }
+
+    /**
+     * playAudioPerdeu - reproduz audio de derrota
+     */
+    public void playAudioPerdeu() {
+        MediaPlayer mp = MediaPlayer.create(this, R.raw.perdeu1);
+        mp.start();
+    }
+
+    /**
+     * toastMessage - faz aparecer uma caixa de mensagens na tela para o usuario
+     * @param message: mensagem a ser mostrada para o usuario.
+     */
     public void toastMessage(String message) {
         Context context = getApplicationContext();
         CharSequence text = message;
@@ -38,6 +69,10 @@ public class GameForca extends AppCompatActivity {
         toast.show();
     }
 
+    /**
+     * atualizaLayout - atualiza o layout com o nro corrente de erros e com a
+     *                  string criptograda mais recente.
+     */
     public void atualizaLayout() {
         String palavraCifrada = p.getPalavraCriptograda();
         lblPalavraCifrada.setText(palavraCifrada.toString());
@@ -45,6 +80,11 @@ public class GameForca extends AppCompatActivity {
         txtLetraDigitada.setText("");
     }
 
+    /**
+     * fazerTentativa - captura a letra digitada pelo usuario e testa se a letra existe na string,
+     *                  atualizando o layout e modelo de acordo.
+     *
+     */
     public void fazerTentativa() {
         /* captura a letra digitada pelo usuario e faz uma tentativa com ela */
         char letra = txtLetraDigitada.getText().toString().charAt(0);
@@ -54,10 +94,14 @@ public class GameForca extends AppCompatActivity {
             /* testa se o usuario ganhou a rodada e redireciona para a tela apropriada */
             if (p.ganhouJogada()) {
                 toastMessage("Voce ganhou essa rodada! :-) ");
+                playAudioGanhou();
+                vibrar();
                 /* todo: redirecionar para a tela de ganhou */
 
             } else {
                 toastMessage("Voce perdeu essa rodada! :-( ");
+                playAudioPerdeu();
+                vibrar();
                 /* todo: redirecionar para a tela de perdeu */
             }
             reinicializaJogo("ALEXBARBOZA");
